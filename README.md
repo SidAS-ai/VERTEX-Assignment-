@@ -303,11 +303,197 @@ For integration tests that require API access:
 pytest tests/integration/ --api-key=your-test-key
 ```
 
+
+---
+
+
+# PitchDeckAnalyzer
+
+A powerful Python tool that leverages Google's Gemini AI to analyze startup pitch decks, providing detailed scoring, feedback, and visualizations to help founders improve their presentations before approaching investors.
+
+## Overview
+
+PitchDeckAnalyzer uses advanced AI to evaluate the key components of a startup pitch deck, providing expert-level feedback across critical sections including problem statement, solution, market analysis, business model, financials, and team composition. The tool extracts text from PDF pitch decks, analyzes each section independently, and provides an overall assessment of fundraising readiness.
+
+## Features
+
+- **PDF Text Extraction**: Automatically extracts text from uploaded pitch deck PDFs, with OCR capability for image-heavy decks
+- **Section Identification**: Uses AI to identify and categorize key sections of the pitch deck
+- **Section-by-Section Analysis**: Provides detailed evaluation of each core section with scores and specific feedback
+- **Visual Reports**: Generates radar charts and bar graphs to visualize strengths and weaknesses
+- **Actionable Recommendations**: Delivers concrete suggestions for improvement
+- **Fundraising Readiness Assessment**: Evaluates overall readiness for investor presentations
+- **Downloadable Reports**: Exports complete analysis as Markdown reports
+
+## Demo Results
+
+I tested the analyzer with Uber's original pitch deck and generated comprehensive results including visualizations and a detailed report. The analysis provides scores for each section, highlights strengths and weaknesses, and offers specific recommendations for improvement.
+
+The radar chart shows relative strengths across different sections, while the bar chart provides absolute scores:
+
+![Screenshot 2025-03-21 221441](https://github.com/user-attachments/assets/15e034f6-fb9f-4e5d-b776-04884a21313c)
+
+
+## Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/PitchDeckAnalyzer.git
+cd PitchDeckAnalyzer
+
+# Install required packages
+pip install -r requirements.txt
+
+# Install Tesseract OCR (for image-based PDFs)
+# On Ubuntu/Debian:
+apt-get install tesseract-ocr
+# On macOS:
+brew install tesseract
+# On Windows:
+# Download and install from https://github.com/UB-Mannheim/tesseract/wiki
+```
+
+## Requirements
+
+- Python 3.7+
+- Google Gemini API key
+- Required Python packages (listed in requirements.txt):
+  - google-generativeai
+  - pandas
+  - numpy
+  - matplotlib
+  - seaborn
+  - pdfplumber
+  - pytesseract
+  - Pillow
+  - ipywidgets (for notebook interface)
+
+## Usage
+
+### Basic Usage
+
+```python
+from pitch_deck_analyzer import PitchDeckAnalyzer
+
+# Initialize the analyzer with your Gemini API key
+analyzer = PitchDeckAnalyzer(api_key="YOUR_GEMINI_API_KEY")
+
+# Analyze a pitch deck
+results = analyzer.analyze_pitch_deck("path_to_your_pitch_deck.pdf")
+
+# Display the results
+analyzer.display_analysis_results(results)
+
+# Save the analysis to a markdown file
+analyzer.save_analysis_report(results, "pitch_deck_analysis.md")
+```
+
+### Jupyter Notebook Implementation
+
+The tool includes a Jupyter notebook interface with interactive upload functionality:
+
+```python
+# Create an upload widget for user pitch decks
+def upload_and_analyze():
+    """Function to handle pitch deck upload and analysis"""
+    print("Please upload your pitch deck PDF...")
+    uploaded = files.upload()
+
+    if uploaded:
+        filename = list(uploaded.keys())[0]
+        print(f"Analyzing uploaded pitch deck: {filename}")
+        results = analyzer.analyze_pitch_deck(filename)
+        analyzer.display_analysis_results(results)
+        analyzer.save_analysis_report(results, f"{os.path.splitext(filename)[0]}_analysis.md")
+        print("Analysis complete! Download the report using the link above.")
+
+# Create an upload button
+upload_button = widgets.Button(
+    description='Upload & Analyze Your Pitch Deck',
+    button_style='primary',
+    icon='upload'
+)
+upload_button.on_click(lambda b: upload_and_analyze())
+display(upload_button)
+```
+
+## Technical Details
+
+### Architecture
+
+The tool is built around the `PitchDeckAnalyzer` class which provides:
+
+1. PDF processing with text extraction and OCR fallback
+2. Section identification using Gemini AI
+3. Section-by-section evaluation with scoring metrics
+4. Overall pitch assessment
+5. Visualization generation
+6. Report creation and export
+
+### Section Weights
+
+Different sections are weighted according to their importance in investor evaluation:
+
+- Problem: 15%
+- Solution: 20%
+- Market: 15%
+- Business Model: 15%
+- Financials: 15%
+- Team: 10%
+- Overall: 10%
+
+## Sample Output
+here is the document of the analysis 
+
+For each section, the analyzer provides:
+- Score (0-100)
+- Key strengths
+- Areas for improvement
+- Specific recommendations
+
+Example section output:
+```
+### Solution (Score: 65/100)
+
+#### Strengths
+- Clear value proposition addressing the identified pain points
+- Innovative approach to connecting riders and drivers
+- Simple and intuitive explanation of how the service works
+
+#### Areas for Improvement
+- Limited differentiation from existing taxi services
+- Insufficient explanation of technological advantages
+- No mention of barriers to entry or defensibility
+
+#### Recommendations
+- Include comparison with closest competitors to highlight unique advantages
+- Elaborate on technological platform that enables the solution
+- Emphasize proprietary elements or other competitive moats
+```
+
+## Future Development
+
+Planned future enhancements include:
+- Support for PowerPoint/Google Slides formats
+- Comparative analysis against successful pitch decks in similar industries
+- Integration with design quality assessment
+- Content-to-design ratio analysis
+- Custom scoring weights for different investor types or funding stages
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Support
+## Acknowledgments
+
+- This tool uses Google's Gemini AI platform for analysis
+- The example analysis was conducted using Uber's original pitch deck
+- Thanks to all contributors and testers who helped refine the tool
+
 
 For support and questions:
 - Open an issue on GitHub
@@ -318,7 +504,3 @@ For support and questions:
 - [Google Gemini AI](https://deepmind.google/technologies/gemini/) for providing the AI backbone
 - [Gradio](https://gradio.app/) for the interactive interface framework
 - All our open-source contributors
-
----
-
-Developed with ❤️ by Your Organization
